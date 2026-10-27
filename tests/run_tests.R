@@ -63,9 +63,10 @@ j <- match("R20", out$rows$id)
 stopifnot(out$rows$length_cm[j] == 2, out$rows$percent_TL[j] == 20,
   is.na(out$rows$length_cm[2]))
 xlsx <- file.path(out$directory,"Synthetic_combinado.xlsx")
-rels <- unz(xlsx,"xl/worksheets/_rels/sheet1.xml.rels")
-reltext <- paste(readLines(rels,warn=FALSE),collapse="");close(rels)
-stopifnot(!grepl("/relationships/drawing",reltext,fixed=TRUE))
+parts <- utils::unzip(xlsx,list=TRUE)$Name
+stopifnot(!any(grepl("printerSettings.*\\.bin$",parts)))
+stopifnot(!any(grepl("xl/worksheets/_rels/",parts,fixed=TRUE)))
+stopifnot(!any(grepl("/$",parts)))
 block <- openxlsx::read.xlsx(xlsx, sheet = "Copiar_dataset",
   rows = 3:51, cols = 1:3, colNames = FALSE, skipEmptyRows = FALSE)
 stopifnot(nrow(block) == 49, block[[2]][1] == 10, block[[3]][1] == 100,
