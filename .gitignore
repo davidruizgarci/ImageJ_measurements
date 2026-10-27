@@ -41,10 +41,28 @@ vignettes/*.pdf
 .env
 
 # pkgdown site
-docs/
+docs/*
+!docs/flujo.md
 
 # translation temp files
 po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Local specimen files and generated results
+config/individuo.R
+config/*.local.R
+data/
+exportaciones/
+*.JPG
+*.jpg
+*.png
+*.tif
+*.tiff
+*.xlsx
+*.roi
+*.zip
+.Rhistory
+.RData
+.Rproj.user/
