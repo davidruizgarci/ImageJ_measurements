@@ -48,8 +48,11 @@ lee, pero **nunca se modifica** y no se copian los datos de otros individuos.
   El resto del nombre es libre; no hace falta REVIEW/VISIBLE.
 - Los ID corresponden a las filas de la plantilla original, no al numero de orden
   que muestra ROI Manager.
-- Solo se aceptan **lineas rectas** modernas de ImageJ (version >=217).
-  Polilineas, contornos, flechas y angulos producen un error explicito.
+- Se aceptan **lineas rectas, segmentadas y libres** de ImageJ (version >=217).
+  Las trayectorias suman todos sus segmentos, no la cuerda entre extremos.
+  Contornos de area, flechas y angulos producen un error explicito.
+  **Fit Spline no se admite**: guardar el trayecto sin suavizado para que el
+  calculo sea reproducible. La calibracion siempre debe ser una recta.
 - La calibracion es un archivo .roi independiente, con distancia conocida **en cm**.
   No se incluye dentro del ZIP de medidas anatomicas.
 - Las dimensiones deben coincidir exactamente con la imagen sobre la que se
@@ -61,7 +64,9 @@ lee, pero **nunca se modifica** y no se copian los datos de otros individuos.
   la linea de calibracion guardada es la fuente de verdad.
 - Medidas repetidas entre vistas requieren una eleccion en preferred_views.
   No se promedian ni se elige automaticamente el ultimo archivo.
-- %TL usa tl_source (habitualmente R03 de Dorsal) para ambas vistas.
+- %TL usa tl_source (R03 de la vista elegida) para ambas vistas.
+  Si TL sigue una cola curvada, documentar el metodo segmentado: no equivale
+  automaticamente a la distancia directa del protocolo ni a una TL manual.
 
 ## Revision anatomica
 
@@ -69,6 +74,7 @@ El programa mide coordenadas, no reconoce anatomia ni decide si un hito es corre
 Las observaciones del catalogo y config$notes se conservan en la tabla.
 Las medidas pendientes permanecen vacias, nunca se convierten en cero.
 Al modificar una calibracion se recalculan todos los valores de esa vista.
+Observaciones registra si cada ROI es recto o sigue un trayecto segmentado.
 Dos decimales son formato de presentacion, no una garantia de exactitud de 0.01 cm.
 No se corrigen automaticamente perspectiva, curvatura ni relieve.
 

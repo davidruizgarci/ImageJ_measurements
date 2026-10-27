@@ -30,8 +30,8 @@ cal <- make_roi(file.path(tmp, "calibration.roi"), c(10,10,70,90))
 stopifnot(abs(read_line_roi(a)$length_px - 100) < 1e-10)
 stopifnot(read_line_roi(a)$x1 == 10.5)
 expect_error(read_line_roi(raw(10)), "corrupto")
-bad <- make_roi(file.path(tmp, "polygon.roi"), c(1,1,2,2), 5L)
-expect_error(read_line_roi(bad), "LINEA RECTA")
+bad <- make_roi(file.path(tmp, "polygon.roi"), c(1,1,2,2), 0L)
+expect_error(read_line_roi(bad), "LINEA")
 zero <- make_roi(file.path(tmp, "zero.roi"), c(1,1,1,1))
 expect_error(validate_geometry(list(read_line_roi(zero)), 120,120), "longitud cero")
 expect_error(validate_geometry(list(read_line_roi(a)), 40,40), "fuera")
@@ -102,4 +102,42 @@ openxlsx::write.xlsx(data.frame(V1=rev(catalog$measurement)),bad_template,
   startRow=3,colNames=FALSE)
 expect_error(read_catalog("config/medidas.csv",bad_template), "no coincide")
 expect_error(merge_views(list(read_view(vv,catalog)),catalog,cfg$tl_source), "Falta longitud total")
+make_poly <- function(path, points, subpixel=FALSE, spline=FALSE) {
+  n <- nrow(points); h2 <- 64+if(subpixel)12*n else 4*n
+  buf <- raw(h2)
+  put <- function(offset,value,size,numeric=FALSE) {
+    con<-rawConnection(raw(),"wb");writeBin(if(numeric)as.double(value) else as.integer(value),
+      con,size=size,endian="big");r<-rawConnectionValue(con);close(con)
+    buf[(offset+1):(offset+length(r))]<<-r
+  }
+  buf[1:4]<-charToRaw("Iout");put(4,228,2);buf[7]<-as.raw(5)
+  left<-floor(min(points[,1]));top<-floor(min(points[,2]))
+  put(8,top,2);put(10,left,2);put(16,n,2)
+  put(50,if(subpixel)128+as.integer(spline) else as.integer(spline),2)
+  put(64,floor(points[,1])-left,2);put(64+2*n,floor(points[,2])-top,2)
+  if(subpixel){put(64+4*n,points[,1],4,TRUE);put(64+8*n,points[,2],4,TRUE)}
+  writeBin(buf,path);path
+}
+pts<-rbind(c(10.5,20.25),c(40.5,20.25),c(40.5,60.25))
+poly<-make_poly(file.path(tmp,"R20_segmented.roi"),pts,TRUE)
+pr<-read_line_roi(poly)
+stopifnot(pr$length_px==70,nrow(pr$points)==3,pr$points$x[1]==10.5)
+freebytes<-readBin(poly,"raw",file.info(poly)$size);freebytes[7]<-as.raw(4)
+stopifnot(read_line_roi(freebytes,"R20_freehand.roi")$length_px==70)
+integer_poly<-make_poly(file.path(tmp,"R20_integer.roi"),round(pts))
+stopifnot(read_line_roi(integer_poly)$length_px==70)
+smooth<-make_poly(file.path(tmp,"R20_smooth.roi"),pts,TRUE,TRUE)
+expect_error(read_line_roi(smooth),"Spline Fit")
+outside<-make_poly(file.path(tmp,"R20_outside.roi"),rbind(c(1,1),c(130,1),c(2,2)))
+expect_error(validate_geometry(list(read_line_roi(outside)),120,120),"fuera")
+pz<-file.path(tmp,"poly.zip");zip_rois(pz,poly)
+polyview<-vv;polyview$rois<-pz
+pv<-read_view(polyview,catalog)
+stopifnot(pv$rows$length_cm==7)
+wrongcal<-v;wrongcal$calibration<-poly
+expect_error(read_view(wrongcal,catalog),"calibracion debe")
+merged_poly<-merge_views(list(view,pv),catalog,cfg$tl_source)
+stopifnot(merged_poly$combined$length_cm[j]==7,
+  merged_poly$combined$percent_TL[j]==70,
+  grepl("Trayecto",merged_poly$combined$note[j]))
 message("Todas las pruebas sinteticas han pasado. Salidas de prueba: ",tmp)

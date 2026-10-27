@@ -115,7 +115,7 @@ write_measurement_excel <- function(path, rows, views, specimen_id, tl_cm) {
       "Medidas no disponibles quedan vacias, nunca cero. No borrar sus filas.",
       "Solo coordenadas guardadas en ZIP y calibracion ROI. Results.csv no se utiliza.",
       "Sin redondeo intermedio; bloque para pegar redondeado a dos decimales.",
-      "Comparte la TL dorsal de referencia; usa su propia escala en cm."))
+      "Comparte la TL de referencia configurada y su metodo; usa su propia escala en cm."))
   openxlsx::writeData(wb, "Calibracion", notes, startRow = 10)
   openxlsx::addStyle(wb, "Calibracion", wrap, rows = 11:17, cols = 2)
   openxlsx::setRowHeights(wb, "Calibracion", 11:17, 42)
