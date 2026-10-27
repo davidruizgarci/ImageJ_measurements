@@ -1,4 +1,29 @@
 # Public entry point: run_specimen(config).
+# Some openxlsx versions emit relationships to absent, unused drawing parts.
+# These freshly authored workbooks contain no drawings: strip those empty
+# declarations so Excel and strict XLSX readers see a self-consistent archive.
+clean_unused_drawings <- function(path) {
+  directory <- tempfile("xlsx_parts_"); dir.create(directory)
+  on.exit(unlink(directory, recursive = TRUE))
+  utils::unzip(path, exdir = directory)
+  rels <- list.files(file.path(directory,"xl","worksheets","_rels"),
+    pattern = "\\.rels$", full.names = TRUE)
+  for (p in rels) {
+    txt <- paste(readLines(p, warn = FALSE, encoding = "UTF-8"), collapse = "")
+    txt <- gsub('<Relationship[^>]*Type="[^"]*/(drawing|vmlDrawing)"[^>]*/>',
+      "", txt, perl = TRUE)
+    writeLines(txt, p, useBytes = TRUE)
+  }
+  p <- file.path(directory,"[Content_Types].xml")
+  txt <- paste(readLines(p, warn = FALSE, encoding = "UTF-8"), collapse = "")
+  txt <- gsub('<Override PartName="/xl/drawings/[^"]*"[^>]*/>', "", txt, perl = TRUE)
+  writeLines(txt, p, useBytes = TRUE)
+  target <- tempfile(fileext = ".xlsx")
+  zip::zipr(target, list.files(directory, full.names = TRUE, all.files = TRUE,
+    no.. = TRUE), root = directory)
+  if (!file.copy(target,path,overwrite=TRUE)) stop("No se pudo finalizar XLSX")
+  unlink(target)
+}
 write_measurement_excel <- function(path, rows, views, specimen_id, tl_cm) {
   wb <- openxlsx::createWorkbook(creator = "ImageJ_measurements")
   dark <- openxlsx::createStyle(fontName = "Arial", fontSize = 10,
@@ -79,6 +104,7 @@ write_measurement_excel <- function(path, rows, views, specimen_id, tl_cm) {
   openxlsx::addStyle(wb, "Calibracion", wrap, rows = 11:17, cols = 2)
   openxlsx::setRowHeights(wb, "Calibracion", 11:17, 42)
   openxlsx::saveWorkbook(wb, path, overwrite = FALSE)
+  clean_unused_drawings(path)
 }
 
 run_specimen <- function(config) {
