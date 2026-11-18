@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+globalThis.localStorage={getItem:()=> 'en'};
+const {tr,getLanguage}=await import('../docs/editor/i18n.mjs');
+assert.equal(getLanguage(),'en');
+assert.equal(tr('Descargar resultados'),'Download results');
+assert.equal(tr('  Guardar proyecto  '),'  Save project  ');
+assert.equal(tr('28 líneas editables · 3 revisadas'),'28 editable lines · 3 reviewed');
+assert.equal(tr('Trayecto · 12 vértices · sin spline'),'Path · 12 vertices · no spline');
+assert.equal(tr('ID duplicado: R03'),'Duplicate ID: R03');
+assert.equal(tr('R03'),'R03');
+assert.equal(tr('Head—dorsal'),'Head—dorsal');
+console.log('Language checks passed: labels, errors, dynamic counts and stable dataset IDs.');

@@ -43,6 +43,9 @@ vignettes/*.pdf
 # pkgdown site
 docs/*
 !docs/flujo.md
+!docs/editor/
+!docs/index.html
+!docs/.nojekyll
 
 # translation temp files
 po/*~

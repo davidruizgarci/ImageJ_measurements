@@ -2,6 +2,17 @@
 
 De ROI de Fiji/ImageJ a previews y Excel reproducibles, desde R/RStudio.
 
+## Editor web / Web editor
+
+[Abrir el editor de medidas](https://davidruizgarci.github.io/ImageJ_measurements/editor/)
+
+Interfaz en Español / English, con fotos y ROI procesados localmente en el navegador.
+Permite revisar vistas dorsal y ventral, arrastrar puntos, dibujar trayectos, calibrar
+cada foto y descargar Excel independientes y combinado en el orden del dataset.
+Guarda y restaura proyectos completos sin subir las imágenes a un servidor.
+Consulta [la guía del editor](docs/editor/README.md) para el flujo y sus límites.
+El flujo R siguiente continúa disponible.
+
 ## Inicio rapido
 
 1. Descarga o clona el repositorio y abre ImageJ_measurements.Rproj en RStudio.
