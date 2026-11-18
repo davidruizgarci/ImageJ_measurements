@@ -44,3 +44,24 @@ node tests/web-core.test.mjs /path/to/ROIs_Dorsal.zip /path/to/ROIs_Ventral.zip
 GitHub Pages serves `/docs` on `main`; `/docs/index.html` links to this editor. Plain HTML/CSS/JS also works on any static host, including Sites when available.
 
 Dependencies are vendored and MIT licensed: fflate 0.8.2 (ZIP), UTIF 3.1.0 + pako 1.0.11 (TIFF). Excel generation is a small OOXML writer using only numeric values and inline strings, no formulas, external links, drawings or printer settings. Limits: 60 MP per image, 350 MB decompressed project ZIP, single-image TIFF with explicit orientation; ordinary ImageJ line types 3/4/5 without spline or specialised subtypes. Original JPEG EXIF orientation is applied for display; ROI alignment must be visually checked. Source files are included byte-for-byte when saved.
+
+
+## Definitions and source figures
+
+Selecting any of the 49 dataset rows shows a bilingual definition, anatomical endpoints,
+measurement method, required view/examination and photographic limitations. Definitions
+are paraphrases of Last, White, Pogonoski & Gledhill (2008), Table 1, pp. 3–4.
+Paper character numbers are separate from dataset IDs. R16–R18, R47 and R49–R51 are
+explicitly marked as dataset adaptations. Last & Séret (2016), Table 1, provide an
+additional reference for interdorsal distance; its exact endpoints still require confirmation.
+
+Figure 2 (p. 6) is included from the previously supplied paper, with panel thumbnails
+and an accessible full-figure dialog. Figure 1 (p. 5) links to the author's figure page:
+the original local PDF was no longer available and the publisher download did not respond.
+R27 and R28 have no specific source illustration. No substitute diagrams are presented
+as originals. All figure credits retain CSIRO / Last et al. (2008).
+
+Each result workbook appends `Diccionario_medidas`, with all 49 definitions in Spanish
+and English and their source references. Existing data sheets, ROI coordinates and
+specimen observations retain their original meaning. The dictionary is independent
+of the UI language and does not mark a specimen measurement as reviewed.

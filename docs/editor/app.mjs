@@ -1,4 +1,5 @@
 import catalog from './catalog.mjs';
+import {renderReference,openReference} from './reference-ui.mjs';
 import {VIEWS,HEIGHTS,length,geometry,readROI,writeROI,scale,calculate,parseCSV,csv,workbookFiles,excelSheets,STATUS} from './core.mjs';
 import {tr,localize,setLanguage,getLanguage} from './i18n.mjs';
 const $=id=>document.getElementById(id),enc=new TextEncoder(),dec=new TextDecoder();
@@ -65,7 +66,7 @@ function render(){
   $('finish').hidden=mode!=='path';$('cancel').hidden=!mode;
   for(const [id,m] of [['draw-line','line'],['draw-path','path'],['draw-cal','cal'],['add-point','add']])$(id).classList.toggle('active',mode===m);
   $('tool-hint').textContent=mode==='cal'?'Marca los dos extremos de la referencia de escala':mode==='line'?'Marca los dos extremos de la medida':mode==='path'?`${draft.length} puntos · Clic para añadir · Terminar o Enter para guardar`:mode==='add'?'Haz clic cerca de un segmento para insertar un vértice':'Rueda: zoom · Fondo: desplazar · Punto: arrastrar';
-  $('export').disabled=busy;buildList(calc);localize();draw();
+  $('export').disabled=busy;buildList(calc);localize();renderReference(selected,getLanguage(),project.sex);draw();
 }
 function fit(){const im=images[viewName];if(!im)return;camera.k=Math.min((vp.clientWidth-45)/im.width,(vp.clientHeight-45)/im.height);camera.x=(vp.clientWidth-im.width*camera.k)/2;camera.y=(vp.clientHeight-im.height*camera.k)/2;draw();}
 function resize(){const d=devicePixelRatio||1;cv.width=Math.round(vp.clientWidth*d);cv.height=Math.round(vp.clientHeight*d);draw();}
@@ -146,6 +147,7 @@ $('scale-note').oninput=e=>{checkpoint();view().scaleNote=e.target.value;render(
 $('search').oninput=()=>{buildList(calculate(project,catalog));localize();};$('filter').onchange=()=>{buildList(calculate(project,catalog));localize();};$('show-all').onchange=draw;
 $('fit').onclick=fit;$('zoom-in').onclick=()=>zoom(1.4);$('zoom-out').onclick=()=>zoom(1/1.4);$('undo').onclick=()=>history(true);$('redo').onclick=()=>history(false);
 $('draw-line').onclick=()=>start('line');$('draw-path').onclick=()=>start('path');$('draw-cal').onclick=()=>start('cal');$('add-point').onclick=()=>start('add');$('finish').onclick=commitDraft;$('cancel').onclick=()=>{cancel();render();};$('delete-point').onclick=()=>{if(vertex==null||!roi()||roi().points.length<=2)return;checkpoint();roi().points.splice(vertex,1);roi().status='proposed';vertex=null;render();};
+$('open-reference').onclick=()=>openReference(selected,getLanguage());$('close-reference').onclick=()=>$('reference-dialog').close();
 $('save-project').onclick=()=>action(()=>save(false));$('export').onclick=()=>action(()=>save(true));$('demo').onclick=demo;$('help').onclick=()=>$('help-dialog').showModal();$('close-help').onclick=()=>$('help-dialog').close();
 window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue='';}});
 const langLabel=document.createElement('label');langLabel.className='language';langLabel.innerHTML='<span>Idioma</span><select id="language" aria-label="Idioma"><option value="es">Español</option><option value="en">English</option></select>';$('help').before(langLabel);$('language').value=getLanguage();$('language').onchange=e=>{setLanguage(e.target.value);render();};
