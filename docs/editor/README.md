@@ -56,8 +56,10 @@ explicitly marked as dataset adaptations. Last & Séret (2016), Table 1, provide
 additional reference for interdorsal distance; its exact endpoints still require confirmation.
 
 Figure 2 (p. 6) is included from the previously supplied paper, with panel thumbnails
-and an accessible full-figure dialog. Figure 1 (p. 5) links to the author's figure page:
-the original local PDF was no longer available and the publisher download did not respond.
+and an accessible full-figure dialog. Figure 1 (p. 5) uses the dorsal and ventral panels supplied by the user on 18 November 2026.
+Both open locally in the illustration dialog. The supplied higher-resolution anteroventral
+panel also replaces the previous Figure 2B thumbnail. These three supplied files are
+retained byte-for-byte; source numbering and credits remain unchanged.
 R27 and R28 have no specific source illustration. No substitute diagrams are presented
 as originals. All figure credits retain CSIRO / Last et al. (2008).
 
